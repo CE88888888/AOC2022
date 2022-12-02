@@ -13,6 +13,7 @@ defmodule Day2 do
 
   def solve2(example \\ false) do
     parse(example)
+    #|> Enum.reduce(0, fn x, acc -> calc_round2(x) + acc end)
     |> Enum.reduce(0, fn x, acc -> calc_round2(x) + acc end)
   end
 
@@ -76,7 +77,7 @@ defmodule Day2 do
       1 ->
         cond do
           p == 1 -> 3
-          p == 2 -> 3 + 1
+          p == 2 -> 4
           true -> 8
         end
 
