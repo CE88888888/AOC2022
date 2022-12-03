@@ -13,7 +13,6 @@ defmodule Day2 do
 
   def solve2(example \\ false) do
     parse(example)
-    #|> Enum.reduce(0, fn x, acc -> calc_round2(x) + acc end)
     |> Enum.reduce(0, fn x, acc -> calc_round2(x) + acc end)
   end
 
