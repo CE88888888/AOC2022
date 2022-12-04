@@ -3,7 +3,7 @@ defmodule Day4 do
     Input.parse(4, example)
     |> String.split("\r\n")
     |> Enum.map(&String.split(&1, ","))
-    |> Enum.map(fn y -> Enum.flat_map(y, &List.flatten(String.split(&1, "-"))) end)
+    |> Enum.map(fn y -> Enum.flat_map(y, &String.split(&1, "-")) end)
     |> Enum.map(fn y -> Enum.map(y, fn x -> String.to_integer(x) end) end)
     |> Enum.map(fn x -> sort_elves(x) end)
   end
