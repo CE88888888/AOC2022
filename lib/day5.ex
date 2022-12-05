@@ -6,11 +6,9 @@ defmodule Day5 do
 
   def solve1(example \\ false) do
     input = parse(example)
-    start = Enum.at(input, 0)
-    instructions = Enum.at(input, 1)
+    stacks = Enum.at(input, 0) |> init_stacks()
+    instructions = Enum.at(input, 1) |> init_instructions()
 
-    stacks = init_stacks(start)
-    instructions = init_instructions(instructions)
     #Run it!
     Enum.map(instructions, & move(&1, stacks))
 
@@ -22,11 +20,9 @@ defmodule Day5 do
 
   def solve2(example \\ false) do
     input = parse(example)
-    start = Enum.at(input, 0)
-    instructions = Enum.at(input, 1)
+    stacks = Enum.at(input, 0) |> init_stacks()
+    instructions = Enum.at(input, 1) |> init_instructions()
 
-    stacks = init_stacks(start)
-    instructions = init_instructions(instructions)
     #Run it!
     Enum.map(instructions, & move9001(&1, stacks))
 
@@ -39,14 +35,11 @@ defmodule Day5 do
   def init_stacks(input) do
     s= input
     |> String.split("\r\n")
-    |> Enum.map(&String.replace(&1, "    ", "."))
-    |> Enum.map(&String.replace(&1, " ", ""))
-    |> Enum.map(&String.replace(&1, "[", ""))
-    |> Enum.map(&String.replace(&1, "]", ""))
-    |> Enum.map(&String.graphemes(&1))
+    |> Enum.map(&String.graphemes/1)
+    |> Enum.map(fn x -> Enum.take_every(tl(x),4)  end)
     |> transpose()
-    |> Enum.map(& Enum.reverse(&1))
-    |> Enum.map(fn x-> Enum.filter(x, & &1!=".") end)
+    |> Enum.map(fn x-> Enum.filter(Enum.reverse(x), & &1!=" ") end)
+
     #add zero index entry so we can use index as stack number
     [[0,"."]]++s
     |> Enum.map(fn x -> Agent.start_link fn -> Enum.reverse(tl(x)) end end)
@@ -56,12 +49,9 @@ defmodule Day5 do
 
   def init_instructions(input) do
     input
-    |> String.replace("\n", "")
-    |> String.replace("move ", "")
-    |> String.replace("from ", "")
-    |> String.replace("to ", "")
     |> String.split("\r")
-    |> Enum.map(& String.split(&1, " "))
+    |> Enum.map(& Regex.scan(~r/(\d+)/, &1, capture: :first ))
+    |> Enum.map(& List.flatten(&1))
     |> Enum.map(fn x -> Enum.map(x, & String.to_integer(&1)) end)
   end
 
