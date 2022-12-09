@@ -81,48 +81,30 @@ defmodule Day9 do
     dx = abs(x - tail.hx)
     dy = abs(y - tail.hy)
 
-    newx =
-      if x > tail.hx do
-        tail.hx + 1
-      else
-        tail.hx - 1
-      end
-
-    newy =
-      if y > tail.hy do
-        tail.hy + 1
-      else
-        tail.hy - 1
-      end
-
     newtail =
-      cond do
-       dx <= 1 and dy <= 1 ->
-          tail
+      if dx <= 1 and dy <= 1 do
+        tail
+      else
+        newx =
+          cond do
+            x > tail.hx -> tail.hx + 1
+            x < tail.hx -> tail.hx - 1
+            x == tail.hx -> tail.hx
+          end
 
-        dx == 2 and dy == 0 ->
-          %{
-            hx: newx,
-            hy: tail.hy,
-            tail: update_tail(newx, tail.hy, tail.tail),
-            h: tail.h
-          }
+        newy =
+          cond do
+            y > tail.hy -> tail.hy + 1
+            y < tail.hy -> tail.hy - 1
+            y == tail.hy -> tail.hy
+          end
 
-        dx == 0 and dy == 2 ->
-          %{
-            hx: tail.hx,
-            hy: newy,
-            tail: update_tail(tail.hx, newy, tail.tail),
-            h: tail.h
-          }
-
-        true ->
-          %{
-            hx: newx,
-            hy: newy,
-            tail: update_tail(newx, newy, tail.tail),
-            h: tail.h
-          }
+        %{
+          hx: newx,
+          hy: newy,
+          tail: update_tail(newx, newy, tail.tail),
+          h: tail.h
+        }
       end
 
     # only keep track of the last knot
