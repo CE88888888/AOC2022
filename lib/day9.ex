@@ -100,9 +100,6 @@ defmodule Day9 do
         dx == 0 and dy == 0 ->
           tail
 
-        dx <= 1 and dy <= 1 ->
-          tail
-
         dx == 2 and dy == 0 ->
           %{
             hx: newx,
