@@ -79,6 +79,20 @@ defmodule Day9 do
     dx = abs(x - tail.hx)
     dy = abs(y - tail.hy)
 
+    newx =
+      if x > tail.hx do
+        tail.hx + 1
+      else
+        tail.hx - 1
+      end
+
+    newy =
+      if y > tail.hy do
+        tail.hy + 1
+      else
+        tail.hy - 1
+      end
+
     newtail =
       cond do
         dx == 0 and dy == 0 ->
@@ -88,13 +102,6 @@ defmodule Day9 do
           tail
 
         dx == 2 and dy == 0 ->
-          newx =
-            if x > tail.hx do
-              tail.hx + 1
-            else
-              tail.hx - 1
-            end
-
           %{
             hx: newx,
             hy: tail.hy,
@@ -103,13 +110,6 @@ defmodule Day9 do
           }
 
         dx == 0 and dy == 2 ->
-          newy =
-            if y > tail.hy do
-              tail.hy + 1
-            else
-              tail.hy - 1
-            end
-
           %{
             hx: tail.hx,
             hy: newy,
@@ -118,20 +118,6 @@ defmodule Day9 do
           }
 
         true ->
-          newx =
-            if x > tail.hx do
-              tail.hx + 1
-            else
-              tail.hx - 1
-            end
-
-          newy =
-            if y > tail.hy do
-              tail.hy + 1
-            else
-              tail.hy - 1
-            end
-
           %{
             hx: newx,
             hy: newy,
