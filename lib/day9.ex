@@ -11,98 +11,140 @@ defmodule Day9 do
     end)
   end
 
+  def init_rope(knots) do
+    start = MapSet.new([{0, 0}])
+    rope = %{hx: 0, hy: 0, h: start, tail: []}
+    totalrope = List.duplicate(rope, knots)
+
+    Enum.reduce(totalrope, rope, fn r, acc -> Map.put(r, :tail, acc) end)
+  end
+
   def solve1(example \\ false) do
     input = parse(example)
+    rope = init_rope(1)
 
-    visited = MapSet.new([{0, 0}])
-    rope = %{hx: 0, hy: 0, tx: 0, ty: 0, h: visited}
-
-    rope = follow_instructions(input, rope)
-
-    rope.h |> Enum.count()
+    follow_instructions(input, rope)
+    |> get_last_knot()
+    |> Enum.count()
   end
 
   def solve2(example \\ false) do
-    example
+    input = parse(example)
+    rope = init_rope(9)
+    rope = follow_instructions(input, rope)
+    get_last_knot(rope) |> Enum.count()
   end
 
   def follow_instructions(input, rope) do
     Enum.reduce(input, rope, fn i, acc -> move_rope(acc, i) end)
   end
 
+  def get_last_knot(rope) do
+    cond do
+      rope.tail == [] -> rope.h
+      true -> get_last_knot(rope.tail)
+    end
+  end
+
   def move_rope(rope, instruction) do
     i = instruction
-    IO.inspect({rope.hx, rope.hy, rope.tx, rope.ty}, label: Enum.at(i, 0))
 
     case i do
       ["R"] ->
-        rope = update_tail(%{hx: rope.hx + 1, hy: rope.hy, tx: rope.tx, ty: rope.ty, h: rope.h})
-        Map.update!(rope, :h, fn _x -> MapSet.put(rope.h, {rope.tx, rope.ty}) end)
+        Map.update!(rope, :tail, fn _r -> update_tail(rope.hx + 1, rope.hy, rope.tail) end)
+        |> Map.update!(:hx, fn _x -> rope.hx + 1 end)
 
       ["U"] ->
-        rope = update_tail(%{hx: rope.hx, hy: rope.hy + 1, tx: rope.tx, ty: rope.ty, h: rope.h})
-        Map.update!(rope, :h, fn _x -> MapSet.put(rope.h, {rope.tx, rope.ty}) end)
+        Map.update!(rope, :tail, fn _r -> update_tail(rope.hx, rope.hy + 1, rope.tail) end)
+        |> Map.update!(:hy, fn _x -> rope.hy + 1 end)
 
       ["L"] ->
-        rope = update_tail(%{hx: rope.hx - 1, hy: rope.hy, tx: rope.tx, ty: rope.ty, h: rope.h})
-        Map.update!(rope, :h, fn _x -> MapSet.put(rope.h, {rope.tx, rope.ty}) end)
+        Map.update!(rope, :tail, fn _r -> update_tail(rope.hx - 1, rope.hy, rope.tail) end)
+        |> Map.update!(:hx, fn _x -> rope.hx - 1 end)
 
       ["D"] ->
-        rope = update_tail(%{hx: rope.hx, hy: rope.hy - 1, tx: rope.tx, ty: rope.ty, h: rope.h})
-        Map.update!(rope, :h, fn _x -> MapSet.put(rope.h, {rope.tx, rope.ty}) end)
+        Map.update!(rope, :tail, fn _r -> update_tail(rope.hx, rope.hy - 1, rope.tail) end)
+        |> Map.update!(:hy, fn _x -> rope.hy - 1 end)
 
       _ ->
         rope
     end
   end
 
-  def update_tail(rope) do
-    dx = abs(rope.hx - rope.tx)
-    dy = abs(rope.hy - rope.ty)
+  def update_tail(_x, _y, []) do
+    []
+  end
 
-    cond do
-      dx == 0 and dy == 0 ->
-        rope
+  def update_tail(x, y, tail) do
+    dx = abs(x - tail.hx)
+    dy = abs(y - tail.hy)
 
-      dx <= 1 and dy <= 1 ->
-        rope
+    newtail =
+      cond do
+        dx == 0 and dy == 0 ->
+          tail
 
-      dx == 2 and dy == 0 ->
-        newx =
-          if rope.hx > rope.tx do
-            rope.tx + 1
-          else
-            rope.tx - 1
-          end
+        dx <= 1 and dy <= 1 ->
+          tail
 
-        %{hx: rope.hx, hy: rope.hy, tx: newx, ty: rope.ty, h: rope.h}
+        dx == 2 and dy == 0 ->
+          newx =
+            if x > tail.hx do
+              tail.hx + 1
+            else
+              tail.hx - 1
+            end
 
-      dx == 0 and dy == 2 ->
-        newy =
-          if rope.hy > rope.ty do
-            rope.ty + 1
-          else
-            rope.ty - 1
-          end
+          %{
+            hx: newx,
+            hy: tail.hy,
+            tail: update_tail(newx, tail.hy, tail.tail),
+            h: tail.h
+          }
 
-        %{hx: rope.hx, hy: rope.hy, tx: rope.tx, ty: newy, h: rope.h}
+        dx == 0 and dy == 2 ->
+          newy =
+            if y > tail.hy do
+              tail.hy + 1
+            else
+              tail.hy - 1
+            end
 
-      true ->
-        newx =
-          if rope.hx > rope.tx do
-            rope.tx + 1
-          else
-            rope.tx - 1
-          end
+          %{
+            hx: tail.hx,
+            hy: newy,
+            tail: update_tail(tail.hx, newy, tail.tail),
+            h: tail.h
+          }
 
-        newy =
-          if rope.hy > rope.ty do
-            rope.ty + 1
-          else
-            rope.ty - 1
-          end
+        true ->
+          newx =
+            if x > tail.hx do
+              tail.hx + 1
+            else
+              tail.hx - 1
+            end
 
-        %{hx: rope.hx, hy: rope.hy, tx: newx, ty: newy, h: rope.h}
+          newy =
+            if y > tail.hy do
+              tail.hy + 1
+            else
+              tail.hy - 1
+            end
+
+          %{
+            hx: newx,
+            hy: newy,
+            tail: update_tail(newx, newy, tail.tail),
+            h: tail.h
+          }
+      end
+
+    # only keep track of the last knot
+    if tail.tail == [] do
+      Map.update!(newtail, :h, fn x -> MapSet.put(x, {newtail.hx, newtail.hy}) end)
+    else
+      newtail
     end
   end
 end
