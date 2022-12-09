@@ -10,11 +10,11 @@ defmodule Day7Test do
   end
 
   test "day7_2_example" do
-    assert Day7.solve2(true) == 1498966
+    assert Day7.solve2(true) == 24933642
   end
 
   test "day7_2" do
-    assert Day7.solve2() == 24933642
+    assert Day7.solve2() == 1498966
   end
 
 end
