@@ -97,7 +97,7 @@ defmodule Day9 do
 
     newtail =
       cond do
-        dx == 0 and dy == 0 ->
+       dx <= 1 and dy <= 1 ->
           tail
 
         dx == 2 and dy == 0 ->
