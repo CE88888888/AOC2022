@@ -3,6 +3,7 @@ defmodule Day8 do
     Input.parse(8, example)
     |> String.split("\r\n")
     |> Enum.map(&String.graphemes(&1))
+    |> init()
   end
 
   def init(input) do
@@ -17,14 +18,12 @@ defmodule Day8 do
   end
 
   def solve1(example \\ false) do
-    input = parse(example)
-    treemap = init(input)
-    count_trees(treemap)
+    parse(example)
+    |> count_trees()
   end
 
   def solve2(example \\ false) do
-    input = parse(example)
-    treemap = init(input)
+    treemap = parse(example)
 
     Enum.map(treemap, &trees_visible(treemap, &1))
     |> Enum.max()
@@ -43,7 +42,7 @@ defmodule Day8 do
     left = List.first(horizontal)
     right = List.last(horizontal)
 
-   top_max =
+    top_max =
       if length(t = Enum.filter(vertical, &(&1.y >= top.y and &1.y < tree.y))) > 0 do
         Enum.max_by(t, & &1.v)
       else
@@ -52,7 +51,7 @@ defmodule Day8 do
 
     bot_max =
       if length(b = Enum.filter(vertical, &(&1.y <= bot.y and &1.y > tree.y))) > 0 do
-       Enum.max_by(b, & &1.v)
+        Enum.max_by(b, & &1.v)
       else
         %{x: -1, y: -1, v: 0}
       end
@@ -90,10 +89,17 @@ defmodule Day8 do
     right = Enum.filter(horizontal, &(&1.x > tree.x))
 
     cond do
-      Enum.empty?(top) -> 0
-      Enum.empty?(bot) -> 0
-      Enum.empty?(left) -> 0
-      Enum.empty?(right) -> 0
+      Enum.empty?(top) ->
+        0
+
+      Enum.empty?(bot) ->
+        0
+
+      Enum.empty?(left) ->
+        0
+
+      Enum.empty?(right) ->
+        0
 
       true ->
         top_count = Enum.take_while(top, &(&1.v < tree.v)) |> Enum.count()
