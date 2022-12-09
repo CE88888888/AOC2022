@@ -31,8 +31,10 @@ defmodule Day9 do
   def solve2(example \\ false) do
     input = parse(example)
     rope = init_rope(9)
-    rope = follow_instructions(input, rope)
-    get_last_knot(rope) |> Enum.count()
+
+    follow_instructions(input, rope)
+    |> get_last_knot()
+    |> Enum.count()
   end
 
   def follow_instructions(input, rope) do
