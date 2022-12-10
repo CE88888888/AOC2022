@@ -3,7 +3,7 @@ defmodule Day10 do
     Input.parse(10, example)
     |> String.split("\r\n")
     |> Enum.map(& if &1 == "noop" do [&1, 1] else [&1, 2] end)
-    |> Enum.map_reduce(0, fn [x, y], acc -> {[x, y, acc + y], y + acc} end)
+    |> Enum.map_reduce(0, fn [x, y], acc -> {[x, y, acc + y], acc + y} end)
     |> elem(0)
   end
 
@@ -27,8 +27,8 @@ defmodule Day10 do
   def sum_cycles(cycles, n) do
       Enum.take_while(cycles, fn [_x, _y, z] -> z < n end)
       |> Enum.filter(fn x -> hd(x) != "noop" end)
-      |> Enum.map(fn [x, y, z] -> List.flatten([String.split(x), y, z]) end)
-      |> Enum.map(fn [_x, y, _z, _c] -> String.to_integer(y) end)
+      |> Enum.map(fn [x, _y, _z] -> String.split(x) end)
+      |> Enum.map(fn [_x, y] -> String.to_integer(y) end)
       |> Enum.sum()
       |> Kernel.+(1)
   end
