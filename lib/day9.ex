@@ -30,7 +30,7 @@ defmodule Day9 do
 
   def solve2(example \\ false) do
     input = parse(example)
-    rope = init_rope(9)
+    rope = init_rope(495)
 
     follow_instructions(input, rope)
     |> get_last_knot()
