@@ -107,7 +107,7 @@ defmodule Day11 do
   # -----------------------------example works, can we make this dynamic?-------
   def speed_2(example \\ false) do
     input = parse(example)
-    mi = Enum.map(0..length(input)-1, fn _x -> elem(Agent.start_link(fn -> 0 end), 1) end)
+    mi = Enum.map(0..(length(input) - 1), fn _x -> elem(Agent.start_link(fn -> 0 end), 1) end)
     divproduct = Enum.reduce(input, 1, fn x, acc -> x.testdiv * acc end)
     items = Enum.map(input, fn x -> Enum.map(x.items, fn i -> [i, x.index] end) end) |> Enum.concat()
 
@@ -117,20 +117,31 @@ defmodule Day11 do
 
   def get_inspects(monkeys, items, mi, divproduct, n) do
     case n do
-      1 -> Enum.map(items, fn [x, y] -> check(x, Enum.at(monkeys, y), monkeys, mi, divproduct) end)
-      _ -> get_inspects(monkeys, Enum.map(items, fn [x, y] -> check(x, Enum.at(monkeys, y), monkeys, mi, divproduct) end), mi, divproduct, n - 1)
+      1 ->
+        Enum.map(items, fn [x, y] -> check(x, Enum.at(monkeys, y), monkeys, mi, divproduct) end)
+
+      _ ->
+        get_inspects(
+          monkeys,
+          Enum.map(items, fn [x, y] -> check(x, Enum.at(monkeys, y), monkeys, mi, divproduct) end),
+          mi,
+          divproduct,
+          n - 1
+        )
     end
   end
 
   def check(x, monkey, monkeys, mi, divproduct) do
     Agent.update(Enum.at(mi, monkey.index), fn x -> x + 1 end)
-    x = rem(op(monkey.operation, x),divproduct)
+    x = rem(op(monkey.operation, x), divproduct)
+
     cond do
       rem(x, monkey.testdiv) == 0 ->
         cond do
           monkey.iftrue < monkey.index -> [x, monkey.iftrue]
           true -> check(x, Enum.at(monkeys, monkey.iftrue), monkeys, mi, divproduct)
         end
+
       true ->
         cond do
           monkey.iffalse < monkey.index -> [x, monkey.iffalse]
@@ -138,5 +149,4 @@ defmodule Day11 do
         end
     end
   end
-
 end
