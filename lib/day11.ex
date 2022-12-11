@@ -62,6 +62,7 @@ defmodule Day11 do
   end
 
   def turn(monkey, divproduct, ex2 \\ false) do
+    Agent.cast(monkey.pid, fn m -> Map.update!(m, :inspects, fn x -> x + length(monkey.items) end) end)
     for i <- monkey.items do
       newworry =
         if ex2 do
@@ -71,15 +72,13 @@ defmodule Day11 do
         end
 
       if rem(newworry, monkey.testdiv) == 0 do
-        Agent.update(monkey.iftrue, fn m -> Map.update!(m, :items, fn x -> x ++ [rem(newworry, divproduct)] end) end)
+        Agent.cast(monkey.iftrue, fn m -> Map.update!(m, :items, fn x -> x ++ [rem(newworry, divproduct)] end) end)
       else
-        Agent.update(monkey.iffalse, fn m -> Map.update!(m, :items, fn x -> x ++ [rem(newworry, divproduct)] end) end)
+        Agent.cast(monkey.iffalse, fn m -> Map.update!(m, :items, fn x -> x ++ [rem(newworry, divproduct)] end) end)
       end
-
-      Agent.update(monkey.pid, fn m -> Map.update!(m, :inspects, fn x -> x + 1 end) end)
     end
 
-    Agent.update(monkey.pid, fn m -> Map.update!(m, :items, fn _x -> [] end) end)
+    Agent.cast(monkey.pid, fn m -> Map.update!(m, :items, fn _x -> [] end) end)
   end
 
   def op(operation, worry) do
@@ -104,7 +103,7 @@ defmodule Day11 do
   end
 
   # -----------------------------Just trying to speed it up---------------------
-  # -----------------------------example works, can we make this dynamic?-------
+  # -----------------------------only minor improvement-------------------------
   def speed_2(example \\ false) do
     input = parse(example)
     mi = Enum.map(0..(length(input) - 1), fn _x -> elem(Agent.start_link(fn -> 0 end), 1) end)
@@ -132,7 +131,7 @@ defmodule Day11 do
   end
 
   def check(x, monkey, monkeys, mi, divproduct) do
-    Agent.update(Enum.at(mi, monkey.index), fn x -> x + 1 end)
+    Agent.cast(Enum.at(mi, monkey.index), fn x -> x + 1 end)
     x = rem(op(monkey.operation, x), divproduct)
 
     cond do
