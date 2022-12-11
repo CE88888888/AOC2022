@@ -104,10 +104,10 @@ defmodule Day11 do
   end
 
   # -----------------------------Just trying to speed it up---------------------
-
+  # -----------------------------example works, can we make this dynamic?-------
   def speed_2(example \\ false) do
     input = parse(example)
-    mi = Enum.map(0..3, fn _x -> elem(Agent.start_link(fn -> 0 end), 1) end)
+    mi = Enum.map(0..length(input)-1, fn _x -> elem(Agent.start_link(fn -> 0 end), 1) end)
     divproduct = Enum.reduce(input, 1, fn x, acc -> x.testdiv * acc end)
     items = Enum.map(input, fn x -> Enum.map(x.items, fn i -> [i, x.index] end) end) |> Enum.concat()
 
