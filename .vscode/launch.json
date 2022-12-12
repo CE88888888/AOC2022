@@ -24,6 +24,22 @@
                 "test/**/test_helper.exs",
                 "test/**/*_test.exs"
             ]
+        },
+        {
+            "type": "mix_task",
+            "name": "12",
+            "request": "launch",
+            "task": "test",
+            "taskArgs": [
+                "test/day12_test.exs"
+                ,"--trace"
+            ],
+            "startApps": true,
+            "projectDir": "${workspaceRoot}",
+            "requireFiles": [
+                "test/**/test_helper.exs",
+                "test/**/Day12_test.exs"
+            ]
         }
     ]
 }

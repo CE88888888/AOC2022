@@ -38,9 +38,9 @@ defmodule Day11 do
 
     for i <- 0..(length(monkeys) - 1) do
       pid = Enum.at(monkeys, i)
-      Agent.update(pid, fn m -> Map.update!(m, :pid, fn _x -> pid end) end)
-      Agent.update(pid, fn m -> Map.update!(m, :iftrue, fn _x -> Enum.at(monkeys, m.iftrue) end) end)
-      Agent.update(pid, fn m -> Map.update!(m, :iffalse, fn _x -> Enum.at(monkeys, m.iffalse) end) end)
+      Agent.update(pid, fn m -> Map.put(m, :pid, pid) end)
+      Agent.update(pid, fn m -> Map.put(m, :iftrue, Enum.at(monkeys, m.iftrue)) end)
+      Agent.update(pid, fn m -> Map.put(m, :iffalse,Enum.at(monkeys, m.iffalse)) end)
     end
 
     monkeys
@@ -78,7 +78,7 @@ defmodule Day11 do
       end
     end
 
-    Agent.cast(monkey.pid, fn m -> Map.update!(m, :items, fn _x -> [] end) end)
+    Agent.cast(monkey.pid, fn m -> Map.put(m, :items, [])  end)
   end
 
   def op(operation, worry) do
