@@ -33,25 +33,6 @@ defmodule Day14 do
     MapSet.difference(filled, walls) |> Enum.count() |> Kernel.+(1)
   end
 
-  def solve3(example \\ false) do
-    input = parse(example)
-
-    walls = Enum.reduce(input, MapSet.new(), fn x, acc -> MapSet.union(acc, plot_line(acc, x)) end)
-    maxdepth = MapSet.to_list(walls) |> Enum.map(fn [_x, y] -> y end) |> Enum.max() |> Kernel.+(2)
-    IO.puts(maxdepth)
-    max = Enum.to_list(1..maxdepth) |> Enum.map(fn x -> 1 + (x - 1) * 2 end) |> Enum.sum()
-    IO.puts(max)
-    a = Enum.count(walls)
-    IO.puts(a)
-    covers = Enum.map(input, &get_covers(&1)) |> Enum.sum()
-    covers
-    # IO.puts(covers)
-    max - a - covers
-
-    # Enum.frequencies_by(walls, fn [_x,y] -> y end)
-    # |> Enum.map(fn x -> if x > 2 do x - 2 else 0 end end)
-  end
-
   def fill(occupied, max_depth) do
     y = MapSet.to_list(elem(occupied, 1)) |> Enum.map(fn [_x, y] -> y end) |> Enum.max()
 
@@ -114,33 +95,5 @@ defmodule Day14 do
       |> Enum.concat()
 
     MapSet.union(grid, MapSet.new(walls))
-  end
-
-  def get_covers(line) do
-    l = length(line) - 1
-
-    # walls =
-    for i <- 0..(l - 1), j <- 1..l, i == j - 1 do
-      [x1, y1] = Enum.at(line, i)
-      [x2, y2] = Enum.at(line, j)
-
-      edge =
-        cond do
-          y1 == y2 and x1 == 500 - y1 -> 1
-          y1 == y2 and x2 == 500 - y1 -> 1
-          y1 == y2 and x1 == 500 + y1 -> 1
-          y1 == y2 and x2 == 500 + y1 -> 1
-          true -> 0
-        end
-
-      cond do
-        abs(x1 - x2) > 1 ->
-          n = abs(x1 - x2) - 3
-          div(((n+1) * (n+1)),4)
-        true -> edge
-      end
-    end
-    |> List.flatten()
-    |> Enum.sum()
   end
 end

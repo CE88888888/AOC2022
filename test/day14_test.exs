@@ -13,8 +13,8 @@ defmodule Day14Test do
     assert Day14.solve2(true) == 93
   end
 
-  # test "day14_2" do
-  #   assert Day14.solve2() == 27566
-  # end
+  test "day14_2" do
+    assert Day14.solve2() == 27566
+  end
 
 end
