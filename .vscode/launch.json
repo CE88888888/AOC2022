@@ -27,11 +27,11 @@
         },
         {
             "type": "mix_task",
-            "name": "12",
+            "name": "14",
             "request": "launch",
             "task": "test",
             "taskArgs": [
-                "test/day12_test.exs"
+                "test/day14_test.exs"
                 ,"--trace"
             ],
             "startApps": true,
